@@ -1,0 +1,15 @@
+{
+  "name": "Credit Score Model",
+  "dockerComposeFile": "../docker/docker-compose.yml",
+  "service": "dev",
+  "workspaceFolder": "/workspace",
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "extensions": [
+    "ms-python.python",
+    "ms-toolsai.jupyter",
+    "dbaeumer.vscode-eslint"
+  ],
+  "postCreateCommand": "pip install -r backend/requirements.txt && cd frontend && npm install"
+} 
