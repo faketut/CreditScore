@@ -3,7 +3,6 @@ import axios from 'axios';
 
 const FinancialDataInput = () => {
     const [formData, setFormData] = useState({
-        user_id: '',
         annual_income: '',
         monthly_expenses: '',
         employment_status: '',
@@ -11,7 +10,6 @@ const FinancialDataInput = () => {
         num_existing_loans: '',
         loan_amount: ''
     });
-
     const [loading, setLoading] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -23,13 +21,16 @@ const FinancialDataInput = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setErrorMessage(''); // Reset error message
+        setErrorMessage('');
         try {
-            await axios.post('http://localhost:5000/financial_data', formData);
+            const token = localStorage.getItem('token');
+            await axios.post('http://localhost:5000/financial_data', formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             setSuccessMessage('Financial data added successfully!');
-            // Optionally reset form data
             setFormData({
-                user_id: '',
                 annual_income: '',
                 monthly_expenses: '',
                 employment_status: '',
@@ -39,29 +40,27 @@ const FinancialDataInput = () => {
             });
         } catch (err) {
             setErrorMessage('Error adding financial data. Please try again.');
-            console.error(err);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div>
-            <h2>Input Financial Data</h2>
-            <form onSubmit={handleSubmit}>
-                <input type="text" name="user_id" value={formData.user_id} onChange={handleChange} placeholder="User ID" required />
-                <input type="number" name="annual_income" value={formData.annual_income} onChange={handleChange} placeholder="Annual Income" required />
-                <input type="number" name="monthly_expenses" value={formData.monthly_expenses} onChange={handleChange} placeholder="Monthly Expenses" required />
-                <input type="text" name="employment_status" value={formData.employment_status} onChange={handleChange} placeholder="Employment Status" required />
-                <input type="number" name="credit_history_length" value={formData.credit_history_length} onChange={handleChange} placeholder="Credit History Length (years)" required />
-                <input type="number" name="num_existing_loans" value={formData.num_existing_loans} onChange={handleChange} placeholder="Number of Existing Loans" required />
-                <input type="number" name="loan_amount" value={formData.loan_amount} onChange={handleChange} placeholder="Loan Amount" required />
-                <button type="submit" disabled={loading}>{loading ? 'Submitting...' : 'Submit'}</button>
+        <div className="p-6">
+            <h2 className="text-2xl font-bold mb-4">Input Financial Data</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <input className="border p-2 w-full" type="number" name="annual_income" value={formData.annual_income} onChange={handleChange} placeholder="Annual Income" required />
+                <input className="border p-2 w-full" type="number" name="monthly_expenses" value={formData.monthly_expenses} onChange={handleChange} placeholder="Monthly Expenses" required />
+                <input className="border p-2 w-full" type="text" name="employment_status" value={formData.employment_status} onChange={handleChange} placeholder="Employment Status" required />
+                <input className="border p-2 w-full" type="number" name="credit_history_length" value={formData.credit_history_length} onChange={handleChange} placeholder="Credit History Length (years)" required />
+                <input className="border p-2 w-full" type="number" name="num_existing_loans" value={formData.num_existing_loans} onChange={handleChange} placeholder="Number of Existing Loans" required />
+                <input className="border p-2 w-full" type="number" name="loan_amount" value={formData.loan_amount} onChange={handleChange} placeholder="Loan Amount" required />
+                <button className="bg-blue-500 text-white p-2 rounded" type="submit" disabled={loading}>{loading ? 'Submitting...' : 'Submit'}</button>
             </form>
-            {successMessage && <p>{successMessage}</p>}
-            {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+            {successMessage && <p className="mt-4">{successMessage}</p>}
+            {errorMessage && <p className="text-red-500">{errorMessage}</p>}
         </div>
     );
 };
 
-export default FinancialDataInput; 
+export default FinancialDataInput;

@@ -27,3 +27,32 @@
 
 ## Deployment
 - Use Docker for containerization and Docker Compose for local development.
+
+## Performance Optimization
+- Added caching with Redis to improve response times for predictions.
+- Optimized database queries using eager loading to reduce the number of queries.
+- Implemented model serving optimization using FastAPI for better performance.
+
+## Model Setup
+
+1. Place trained model (model.pkl) in `machine_learning/models/`
+2. Retrain model (if needed):
+   ```bash
+   python machine_learning/train_model.py
+   ```
+
+## Database Setup
+
+### Development
+- The application uses SQLite for development.
+- The development database is stored in `dev.db`.
+
+### Production
+- The application uses PostgreSQL for production.
+- Set the `DATABASE_URL` environment variable to connect to the PostgreSQL database.
+
+### Migrations
+- Use Flask-Migrate for handling database migrations.
+- Run `flask db init` to initialize migrations.
+- Run `flask db migrate -m "Migration message"` to create a migration script.
+- Run `flask db upgrade` to apply migrations to the database.

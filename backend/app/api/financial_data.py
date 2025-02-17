@@ -1,27 +1,25 @@
 from flask import Blueprint, request, jsonify
 from app.models.financial_data import FinancialData
 from app import db
+from app.middleware import token_required
+from app.middleware.validation import validate_financial_data
 import uuid
 
 financial_data_bp = Blueprint('financial_data', __name__)
 
 @financial_data_bp.route('/financial_data', methods=['POST'])
-def add_financial_data():
+@token_required
+def add_financial_data(current_user):
     data = request.get_json()
     
     # Validate input data
-    required_fields = ['user_id', 'annual_income', 'monthly_expenses', 
-                       'employment_status', 'credit_history_length', 
-                       'num_existing_loans', 'loan_amount']
-    for field in required_fields:
-        if field not in data:
-            return jsonify({'error': f'Missing field: {field}'}), 400
-
-    # Additional validation can be added here (e.g., type checks)
+    is_valid, error_message = validate_financial_data(data)
+    if not is_valid:
+        return jsonify({'error': error_message}), 400
 
     financial_data = FinancialData(
         id=str(uuid.uuid4()),
-        user_id=data['user_id'],
+        user_id=current_user,
         annual_income=data['annual_income'],
         monthly_expenses=data['monthly_expenses'],
         employment_status=data['employment_status'],
@@ -33,4 +31,4 @@ def add_financial_data():
     db.session.add(financial_data)
     db.session.commit()
     
-    return jsonify({'message': 'Financial data added successfully'}), 201 
+    return jsonify({'message': 'Financial data added successfully!'}), 201 
